@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="Monta Copas">
+  <rect width="512" height="512" rx="118" fill="#0b120e"/>
+  <circle cx="256" cy="240" r="168" fill="#c9ff45" opacity="0.06"/>
+  <g transform="translate(256 254) scale(13) translate(-12 -12)" fill="none" stroke="#c9ff45" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4Z"/>
+    <path d="M7 5H4v2a3 3 0 0 0 3 3M17 5h3v2a3 3 0 0 1-3 3"/>
+  </g>
+</svg>
