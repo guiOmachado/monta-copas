@@ -1,7 +1,7 @@
 {
   "name": "Monta Copas — gerador de campeonatos",
   "short_name": "Monta Copas",
-  "description": "Monte campeonatos de FIFA e da vida real: pontos corridos, grupos e mata-mata com sorteio, placares e classificação automáticos.",
+  "description": "Monte campeonatos de FIFA, sinuca e da vida real: pontos corridos, grupos e mata-mata com sorteio, placares e classificação automáticos.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

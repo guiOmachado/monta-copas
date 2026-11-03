@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import type { Sport, TournamentFormat, TournamentOptions } from '../lib/types';
 import { DEFAULT_OPTIONS } from '../lib/types';
 import { buildTournament } from '../lib/engine';
+import { SPORTS, sportMeta, bestOfLabel } from '../lib/sports';
 import { actions } from '../lib/store';
 import { navigate } from '../lib/router';
 import { PageBar } from '../components/AppHeader';
@@ -9,6 +10,7 @@ import { Avatar } from '../components/Avatar';
 import {
   IconBall,
   IconCheck,
+  IconEightBall,
   IconFlag,
   IconLayers,
   IconList,
@@ -22,14 +24,11 @@ import { cx, plural } from '../lib/ui';
 
 const STEPS = ['Básico', 'Formato', 'Jogadores'];
 
-const GAME_SUGGESTIONS = [
-  'EA SPORTS FC 26',
-  'EA SPORTS FC 25',
-  'eFootball',
-  'PES 2017',
-  'FIFA 23',
-  'FIFA 22',
-];
+const SPORT_ICONS = {
+  fifa: IconBall,
+  sinuca: IconEightBall,
+  real: IconFlag,
+} as const;
 
 function splitNames(value: string): string[] {
   return value
@@ -98,7 +97,7 @@ export function CreatePage() {
   const [step, setStep] = useState(0);
   const [name, setName] = useState('');
   const [sport, setSport] = useState<Sport>('fifa');
-  const [game, setGame] = useState(GAME_SUGGESTIONS[0]);
+  const [game, setGame] = useState(SPORTS[0].suggestions[0] ?? '');
   const [location, setLocation] = useState('');
   const [format, setFormat] = useState<TournamentFormat>('league');
   const [options, setOptions] = useState<TournamentOptions>({
@@ -116,6 +115,15 @@ export function CreatePage() {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [step]);
+
+  const activeSport = sportMeta(sport);
+
+  const selectSport = (next: Sport) => {
+    setSport(next);
+    const meta = sportMeta(next);
+    setGame(next === 'fifa' ? meta.suggestions[0] ?? '' : next === 'sinuca' ? '' : '');
+    setLocation('');
+  };
 
   const maxGroups = Math.max(1, Math.floor(names.length / 2));
   const groupOptions = [2, 3, 4, 6, 8];
@@ -188,8 +196,8 @@ export function CreatePage() {
     const tournament = buildTournament({
       name,
       sport,
-      game: sport === 'fifa' ? game : undefined,
-      location: sport === 'real' ? location : undefined,
+      game: sport === 'real' ? undefined : game,
+      location: sport === 'fifa' ? undefined : location,
       format,
       participantNames: names,
       options: sanitizedOptions,
@@ -242,57 +250,57 @@ export function CreatePage() {
 
             <div className="field">
               <span className="label">Onde vai acontecer?</span>
-              <div className="choice-grid">
-                <button
-                  type="button"
-                  className={cx('choice-card', sport === 'fifa' && 'is-selected')}
-                  onClick={() => setSport('fifa')}
-                >
-                  <span className="choice-icon">
-                    <IconBall size={22} />
-                  </span>
-                  <strong>FIFA / videogame</strong>
-                  <span>No console, PC ou celular</span>
-                </button>
-                <button
-                  type="button"
-                  className={cx('choice-card', sport === 'real' && 'is-selected')}
-                  onClick={() => setSport('real')}
-                >
-                  <span className="choice-icon">
-                    <IconFlag size={22} />
-                  </span>
-                  <strong>Vida real</strong>
-                  <span>Quadra, campo ou society</span>
-                </button>
+              <div className="sport-list">
+                {SPORTS.map((item) => {
+                  const Icon = SPORT_ICONS[item.id];
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      className={cx('format-card', sport === item.id && 'is-selected')}
+                      onClick={() => selectSport(item.id)}
+                    >
+                      <span className="choice-icon">
+                        <Icon size={20} />
+                      </span>
+                      <span className="format-copy">
+                        <strong>{item.title}</strong>
+                        <span>{item.description}</span>
+                      </span>
+                      <span className={cx('radio', sport === item.id && 'is-on')} />
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
-            {sport === 'fifa' ? (
+            {sport !== 'real' && (
               <div className="field">
-                <label htmlFor="game">Jogo</label>
+                <label htmlFor="game">{activeSport.fieldLabel}</label>
                 <input
                   id="game"
                   className="input"
                   value={game}
                   list="game-suggestions"
-                  placeholder="Ex.: EA SPORTS FC 26"
+                  placeholder={activeSport.placeholder}
                   onChange={(event) => setGame(event.target.value)}
                 />
                 <datalist id="game-suggestions">
-                  {GAME_SUGGESTIONS.map((item) => (
+                  {activeSport.suggestions.map((item) => (
                     <option key={item} value={item} />
                   ))}
                 </datalist>
               </div>
-            ) : (
+            )}
+
+            {sport !== 'fifa' && (
               <div className="field">
                 <label htmlFor="place">Local (opcional)</label>
                 <input
                   id="place"
                   className="input"
                   value={location}
-                  placeholder="Ex.: quadra do condomínio"
+                  placeholder={sport === 'sinuca' ? 'Ex.: bar do Zé' : 'Ex.: quadra do condomínio'}
                   onChange={(event) => setLocation(event.target.value)}
                 />
               </div>
@@ -301,6 +309,7 @@ export function CreatePage() {
         )}
 
         {step === 1 && (
+
           <div className="wizard-pane">
             <div className="field">
               <span className="label">Formato da disputa</span>
@@ -395,6 +404,28 @@ export function CreatePage() {
                 label="Disputa de 3º lugar"
                 description="Os perdedores da semifinal disputam o bronze."
               />
+            )}
+
+            {sport === 'sinuca' && (
+              <div className="field">
+                <span className="label">Formato de cada partida</span>
+                <div className="chip-row">
+                  {[1, 3, 5, 7].map((value) => (
+                    <button
+                      key={value}
+                      type="button"
+                      className={cx('chip-btn', options.bestOf === value && 'is-active')}
+                      onClick={() => setOptions((current) => ({ ...current, bestOf: value }))}
+                    >
+                      {bestOfLabel(value)}
+                    </button>
+                  ))}
+                </div>
+                <span className="field-hint">
+                  Na sinuca não existe empate: cada partida tem um vencedor. Em séries, quem chega primeiro
+                  ao número de vitórias leva.
+                </span>
+              </div>
             )}
 
             {format === 'league' && (
@@ -550,6 +581,9 @@ export function CreatePage() {
                   </span>
                   {format !== 'league' && options.knockoutTwoLegged && (
                     <span className="chip chip--ghost">Ida e volta</span>
+                  )}
+                  {sport === 'sinuca' && options.bestOf > 1 && (
+                    <span className="chip chip--ghost">{bestOfLabel(options.bestOf)}</span>
                   )}
                   {format !== 'knockout' && options.doubleRound && (
                     <span className="chip chip--ghost">Turno e returno</span>

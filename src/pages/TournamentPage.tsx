@@ -14,6 +14,7 @@ import {
 import { actions, useTournament } from '../lib/store';
 import { navigate } from '../lib/router';
 import { exportTournament, shareTournament } from '../lib/export';
+import { bestOfLabel, sportHeadline, sportMeta } from '../lib/sports';
 import { PageBar } from '../components/AppHeader';
 import { Avatar } from '../components/Avatar';
 import { Bracket, ThirdPlace } from '../components/Bracket';
@@ -24,6 +25,7 @@ import { ConfirmSheet } from '../components/Sheet';
 import {
   IconBall,
   IconCopy,
+  IconEightBall,
   IconDownload,
   IconFlag,
   IconInfo,
@@ -151,7 +153,7 @@ export function TournamentPage({ id }: { id: string }) {
       <div className="t-sticky">
         <PageBar
           title={tournament.name}
-          subtitle={tournament.sport === 'fifa' ? tournament.game || 'FIFA' : 'Vida real'}
+          subtitle={sportHeadline(tournament)}
           onBack={() => navigate('/')}
           right={
             <button type="button" className="icon-btn" onClick={share} aria-label="Compartilhar campeonato">
@@ -178,10 +180,19 @@ export function TournamentPage({ id }: { id: string }) {
       <main className="t-main">
         <section className="t-hero">
           <div className="t-hero-chips">
-            <span className={cx('chip', tournament.sport === 'fifa' ? 'chip--lime' : 'chip--sky')}>
-              {tournament.sport === 'fifa' ? <IconBall size={13} /> : <IconFlag size={13} />}
-              {tournament.sport === 'fifa' ? tournament.game || 'FIFA' : 'Vida real'}
+            <span className={cx('chip', sportMeta(tournament.sport).chipClass)}>
+              {tournament.sport === 'fifa' ? (
+                <IconBall size={13} />
+              ) : tournament.sport === 'sinuca' ? (
+                <IconEightBall size={13} />
+              ) : (
+                <IconFlag size={13} />
+              )}
+              {tournament.sport === 'real' ? sportMeta(tournament.sport).label : sportHeadline(tournament)}
             </span>
+            {tournament.sport === 'sinuca' && tournament.options.bestOf > 1 && (
+              <span className="chip chip--ghost">{bestOfLabel(tournament.options.bestOf)}</span>
+            )}
             <span className="chip chip--ghost">{FORMAT_LABEL[tournament.format]}</span>
             {status.finished && <span className="chip chip--ghost">Finalizado</span>}
           </div>
@@ -310,7 +321,11 @@ export function TournamentPage({ id }: { id: string }) {
               />
             )}
 
-            <p className="tab-hint">Toque em um jogo para registrar o placar.</p>
+            <p className="tab-hint">
+              {tournament.sport === 'sinuca'
+                ? 'Toque em um jogo para registrar as partidas. Na sinuca não existe empate.'
+                : 'Toque em um jogo para registrar o placar.'}
+            </p>
           </section>
         )}
 
@@ -429,6 +444,9 @@ export function TournamentPage({ id }: { id: string }) {
                   </span>
                 )}
                 {tournament.options.thirdPlace && <span className="chip chip--ghost">3º lugar</span>}
+                {tournament.sport === 'sinuca' && (
+                  <span className="chip chip--ghost">{bestOfLabel(tournament.options.bestOf)}</span>
+                )}
               </div>
             </div>
 
@@ -523,6 +541,8 @@ export function TournamentPage({ id }: { id: string }) {
           awayName={scoreSides.away?.name ?? null}
           homeGoals={scoreMatch.homeGoals}
           awayGoals={scoreMatch.awayGoals}
+          noDraw={!sportMeta(tournament.sport).allowsDraw}
+          bestOf={tournament.sport === 'sinuca' ? tournament.options.bestOf : 1}
           onClose={() =>
             setSheet(sheet.backToTie ? { kind: 'tie', tieId: sheet.backToTie } : null)
           }

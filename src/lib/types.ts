@@ -1,4 +1,4 @@
-export type Sport = 'fifa' | 'real';
+export type Sport = 'fifa' | 'real' | 'sinuca';
 
 /** Liga / pontos corridos, mata-mata puro, ou grupos + mata-mata. */
 export type TournamentFormat = 'league' | 'knockout' | 'groups';
@@ -43,6 +43,8 @@ export interface TournamentOptions {
   groupCount: number;
   qualifiersPerGroup: number;
   thirdPlace: boolean;
+  /** Sinuca: melhor de X partidas (1 = jogo único) */
+  bestOf: number;
 }
 
 export interface Tournament {
@@ -112,4 +114,5 @@ export const DEFAULT_OPTIONS: TournamentOptions = {
   groupCount: 2,
   qualifiersPerGroup: 2,
   thirdPlace: false,
+  bestOf: 1,
 };

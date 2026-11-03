@@ -1,8 +1,8 @@
 # Monta Copas 🏆
 
-Aplicativo (PWA) para montar e acompanhar campeonatos — tanto de **FIFA / videogame** quanto da **vida real**
-(quadra, campo, society). Sorteia os confrontos, registra os placares e atualiza tabela, classificados e chave
-automaticamente.
+Aplicativo (PWA) para montar e acompanhar campeonatos — de **FIFA / videogame**, de **sinuca** e da
+**vida real** (quadra, campo, society). Sorteia os confrontos, registra os placares e atualiza tabela,
+classificados e chave automaticamente.
 
 Funciona como app instalado na tela inicial do celular, em tela cheia, e **100% offline** depois do primeiro
 acesso. Os dados ficam salvos no próprio aparelho.
@@ -17,6 +17,8 @@ acesso. Os dados ficam salvos no próprio aparelho.
   não é potência de 2.
 - **Turno e returno**, **ida e volta no mata-mata** (placar agregado) e **disputa de 3º lugar**.
 - **Registro de placar** com stepper grande, pensado para usar no celular durante a resenha.
+- **Regras da sinuca**: sem empate (toda partida tem vencedor) e séries **melhor de 3, 5 ou 7**, aplicadas
+  tanto na fase de grupos quanto no mata-mata.
 - **Classificação automática**: pontos, vitórias, saldo de gols e gols pró como critérios de desempate.
 - **Chave visual** do mata-mata, com agregado, classificado e decisão por pênaltis quando o agregado empata.
 - **Compartilhar** resumo do campeonato e **exportar/importar** backup em JSON.

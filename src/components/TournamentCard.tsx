@@ -1,24 +1,28 @@
 import type { Tournament } from '../lib/types';
 import { FORMAT_LABEL, tournamentStatus } from '../lib/engine';
+import { sportMeta } from '../lib/sports';
 import { navigate } from '../lib/router';
 import { Avatar } from './Avatar';
-import { IconBall, IconChevronRight, IconFlag, IconTrophy, IconUsers } from './Icons';
+import { IconBall, IconChevronRight, IconEightBall, IconFlag, IconTrophy, IconUsers } from './Icons';
 import { cx, plural } from '../lib/ui';
 
 export function TournamentCard({ tournament }: { tournament: Tournament }) {
   const status = tournamentStatus(tournament);
-  const isFifa = tournament.sport === 'fifa';
+  const meta = sportMeta(tournament.sport);
+  const SportIcon =
+    tournament.sport === 'fifa' ? IconBall : tournament.sport === 'sinuca' ? IconEightBall : IconFlag;
+  const chipText = tournament.sport === 'real' ? meta.label : tournament.game || meta.label;
 
   return (
     <button
       type="button"
-      className={cx('tcard', isFifa ? 'tcard--fifa' : 'tcard--real')}
+      className={cx('tcard', meta.accentClass)}
       onClick={() => navigate(`/c/${tournament.id}`)}
     >
       <div className="tcard-head">
-        <span className={cx('chip', isFifa ? 'chip--lime' : 'chip--sky')}>
-          {isFifa ? <IconBall size={13} /> : <IconFlag size={13} />}
-          {isFifa ? tournament.game || 'FIFA' : 'Vida real'}
+        <span className={cx('chip', meta.chipClass)}>
+          <SportIcon size={13} />
+          {chipText}
         </span>
         <span className="tcard-format">{FORMAT_LABEL[tournament.format]}</span>
       </div>

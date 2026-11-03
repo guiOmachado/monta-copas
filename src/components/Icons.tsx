@@ -36,6 +36,22 @@ export const IconBall = (p: IconProps) => (
   </Svg>
 );
 
+export const IconEightBall = (p: IconProps) => (
+  <Svg {...p}>
+    <circle cx="12" cy="12" r="9" />
+    <circle cx="12" cy="12" r="4.6" />
+    <circle cx="12" cy="10.4" r="1.15" fill="currentColor" stroke="none" />
+    <circle cx="12" cy="13.6" r="1.35" fill="currentColor" stroke="none" />
+  </Svg>
+);
+
+export const IconCue = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M3 21 21 3M4.5 19.5l2-2M7 17l1.5-1.5" />
+    <circle cx="17.5" cy="17.5" r="3" />
+  </Svg>
+);
+
 export const IconPlus = (p: IconProps) => (
   <Svg {...p}>
     <path d="M12 5v14M5 12h14" />

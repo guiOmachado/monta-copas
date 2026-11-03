@@ -1,8 +1,10 @@
 import { useMemo, useRef, useState } from 'react';
 import { useTournaments } from '../lib/store';
 import { actions } from '../lib/store';
+import type { Sport } from '../lib/types';
 import { tournamentStatus } from '../lib/engine';
 import { navigate } from '../lib/router';
+import { SPORTS } from '../lib/sports';
 import { useOnlineStatus, usePwaInstall } from '../lib/pwa';
 import { readBackupFile } from '../lib/export';
 import { createDemoTournament } from '../lib/demo';
@@ -12,12 +14,11 @@ import { InstallSheet } from '../components/InstallSheet';
 import { IconDownload, IconInstall, IconPlus, IconTrophy, IconUpload } from '../components/Icons';
 import { cx, plural } from '../lib/ui';
 
-type Filter = 'all' | 'fifa' | 'real' | 'done';
+type Filter = 'all' | Sport | 'done';
 
 const FILTERS: { id: Filter; label: string }[] = [
   { id: 'all', label: 'Todos' },
-  { id: 'fifa', label: 'FIFA' },
-  { id: 'real', label: 'Vida real' },
+  ...SPORTS.map((sport) => ({ id: sport.id as Filter, label: sport.label })),
   { id: 'done', label: 'Finalizados' },
 ];
 
@@ -80,15 +81,15 @@ export function HomePage() {
 
       <main className="home-main">
         <section className="hero">
-          <span className="hero-tag">Copas de verdade e de FIFA</span>
+          <span className="hero-tag">FIFA, sinuca e vida real</span>
           <h1>
             Monte sua copa
             <br />
             em dois minutos.
           </h1>
           <p className="hero-sub">
-            Sorteie os confrontos, registre os placares e acompanhe a classificação — no videogame ou na
-            quadra do fim de semana.
+            Sorteie os confrontos, registre os placares e acompanhe a classificação — no videogame, na mesa de
+            sinuca ou na quadra do fim de semana.
           </p>
           <button type="button" className="btn btn--primary btn--lg btn--full" onClick={() => navigate('/novo')}>
             <IconPlus size={19} />

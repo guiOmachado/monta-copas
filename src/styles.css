@@ -359,6 +359,11 @@ textarea {
   color: #00131e;
 }
 
+.chip--coral {
+  background: linear-gradient(135deg, #ffb08a, #ff7a66);
+  color: #2a0803;
+}
+
 .chip--ghost {
   background: rgba(255, 255, 255, 0.05);
   border-color: var(--line);
@@ -639,6 +644,10 @@ textarea {
 
 .tcard--real::before {
   background: var(--sky);
+}
+
+.tcard--sinuca::before {
+  background: linear-gradient(180deg, #ffb08a, #ff7a66);
 }
 
 .tcard-head {
@@ -1067,43 +1076,6 @@ textarea {
   color: var(--muted);
 }
 
-.choice-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-
-.choice-card {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 4px;
-  padding: 14px;
-  border: 1px solid var(--line-strong);
-  border-radius: 18px;
-  background: var(--surface);
-  text-align: left;
-  cursor: pointer;
-  transition: border-color 0.15s ease, background 0.15s ease, transform 0.15s ease;
-}
-
-.choice-card strong {
-  margin-top: 6px;
-  font-size: 13.5px;
-}
-
-.choice-card > span:last-child {
-  font-size: 11.5px;
-  color: var(--muted);
-  line-height: 1.35;
-}
-
-.choice-card.is-selected {
-  border-color: rgba(201, 255, 69, 0.6);
-  background: linear-gradient(170deg, rgba(201, 255, 69, 0.14), rgba(201, 255, 69, 0.04));
-  box-shadow: 0 0 0 1px rgba(201, 255, 69, 0.25);
-}
-
 .choice-icon {
   display: grid;
   place-items: center;
@@ -1115,12 +1087,8 @@ textarea {
   color: var(--text-soft);
 }
 
-.choice-card.is-selected .choice-icon {
-  background: var(--lime);
-  color: var(--lime-ink);
-}
-
-.format-list {
+.format-list,
+.sport-list {
   display: flex;
   flex-direction: column;
   gap: 9px;
@@ -2399,6 +2367,17 @@ textarea {
   font-size: 11.5px;
   line-height: 1.5;
   color: var(--muted);
+}
+
+.sheet-error {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 107, 107, 0.32);
+  border-radius: 12px;
+  background: rgba(255, 107, 107, 0.1);
+  color: #ffb3b3;
+  font-size: 12px;
+  line-height: 1.45;
 }
 
 .sheet-hint--center {

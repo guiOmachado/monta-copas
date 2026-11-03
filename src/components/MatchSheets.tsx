@@ -13,7 +13,7 @@ function Stepper({ value, onChange }: { value: number; onChange: (next: number) 
         type="button"
         className="stepper-btn"
         onClick={() => onChange(clampScore(value - 1))}
-        aria-label="Diminuir gols"
+        aria-label="Diminuir pontos"
       >
         <IconMinus size={18} />
       </button>
@@ -21,7 +21,7 @@ function Stepper({ value, onChange }: { value: number; onChange: (next: number) 
         className="stepper-value"
         inputMode="numeric"
         value={value}
-        aria-label="Gols"
+        aria-label="Pontos"
         onFocus={(event) => event.currentTarget.select()}
         onChange={(event) => {
           const digits = event.target.value.replace(/\D/g, '').slice(0, 2);
@@ -32,7 +32,7 @@ function Stepper({ value, onChange }: { value: number; onChange: (next: number) 
         type="button"
         className="stepper-btn"
         onClick={() => onChange(clampScore(value + 1))}
-        aria-label="Aumentar gols"
+        aria-label="Aumentar pontos"
       >
         <IconPlus size={18} />
       </button>
@@ -46,6 +46,10 @@ interface ScoreSheetProps {
   awayName: string | null;
   homeGoals: number | null;
   awayGoals: number | null;
+  /** Sinuca: toda partida precisa de um vencedor */
+  noDraw?: boolean;
+  /** Sinuca: melhor de X partidas (1 = jogo único) */
+  bestOf?: number;
   onClose: () => void;
   onSave: (home: number, away: number) => void;
   onClear: () => void;
@@ -57,12 +61,20 @@ export function ScoreSheet({
   awayName,
   homeGoals,
   awayGoals,
+  noDraw = false,
+  bestOf = 1,
   onClose,
   onSave,
   onClear,
 }: ScoreSheetProps) {
   const [home, setHome] = useState(homeGoals ?? 0);
   const [away, setAway] = useState(awayGoals ?? 0);
+
+  const target = bestOf > 1 ? Math.ceil(bestOf / 2) : null;
+  const drawBlocked = noDraw && home === away;
+  const seriesBlocked =
+    target !== null && !((home === target && away < target) || (away === target && home < target));
+  const invalid = drawBlocked || seriesBlocked;
 
   return (
     <Sheet open onClose={onClose} labelledBy="score-title">
@@ -84,7 +96,18 @@ export function ScoreSheet({
         </div>
       </div>
 
-      <p className="sheet-hint">O placar fica salvo automaticamente no aparelho e funciona offline.</p>
+      <p className="sheet-hint">
+        {noDraw ? 'Na sinuca não existe empate: cada partida tem um vencedor. ' : ''}
+        {target !== null ? `Melhor de ${bestOf} — vale quem vencer ${target} partidas. ` : ''}
+        O placar fica salvo no aparelho e funciona offline.
+      </p>
+
+      {drawBlocked && <p className="sheet-error">Empate não vale na sinuca. Ajuste o placar para ter um vencedor.</p>}
+      {!drawBlocked && seriesBlocked && target !== null && (
+        <p className="sheet-error">
+          No melhor de {bestOf}, o vencedor fecha com {target} partidas. Ajuste o placar.
+        </p>
+      )}
 
       <div className="sheet-actions">
         <button type="button" className="btn btn--ghost" onClick={onClear}>
@@ -93,6 +116,7 @@ export function ScoreSheet({
         <button
           type="button"
           className="btn btn--primary"
+          disabled={invalid}
           onClick={() => onSave(home, away)}
         >
           Salvar placar

@@ -98,7 +98,7 @@ describe('Monta Copas', () => {
 
     const sheet = document.querySelector('.sheet') as HTMLElement;
     expect(sheet).toBeTruthy();
-    const plusButtons = within(sheet).getAllByLabelText(/Aumentar gols/i);
+    const plusButtons = within(sheet).getAllByLabelText(/Aumentar pontos/i);
     fireEvent.click(plusButtons[0]);
     fireEvent.click(plusButtons[0]);
     fireEvent.click(plusButtons[1]);
@@ -110,6 +110,65 @@ describe('Monta Copas', () => {
     const rows = document.querySelectorAll('.standings tbody tr');
     expect(rows.length).toBe(3);
     expect(rows[0].textContent).toContain('3');
+  });
+
+  it('bloqueia empate na sinuca', () => {
+    const tournament = buildTournament({
+      name: 'Sinuca do Zé',
+      sport: 'sinuca',
+      format: 'league',
+      participantNames: ['Ana', 'Bia'],
+      options: { ...DEFAULT_OPTIONS, bestOf: 1 },
+      draw: false,
+    });
+    actions.add(tournament);
+    setRoute(`#/c/${tournament.id}`);
+
+    render(<App />);
+    fireEvent.click(document.querySelector('.match-row') as HTMLElement);
+
+    const sheet = document.querySelector('.sheet') as HTMLElement;
+    const save = within(sheet).getByRole('button', { name: /Salvar placar/i }) as HTMLButtonElement;
+    expect(save.disabled).toBe(true);
+    expect(within(sheet).getByText(/Empate não vale na sinuca/i)).toBeTruthy();
+
+    fireEvent.click(within(sheet).getAllByLabelText(/Aumentar pontos/i)[0]);
+    expect(save.disabled).toBe(false);
+    fireEvent.click(save);
+
+    expect(document.querySelector('.match-score')?.textContent).toContain('1');
+  });
+
+  it('exige fechar a série melhor de 5 na sinuca', () => {
+    const tournament = buildTournament({
+      name: 'Sinuca melhor de 5',
+      sport: 'sinuca',
+      format: 'knockout',
+      participantNames: ['Ana', 'Bia'],
+      options: { ...DEFAULT_OPTIONS, bestOf: 5 },
+      draw: false,
+    });
+    actions.add(tournament);
+    setRoute(`#/c/${tournament.id}`);
+
+    render(<App />);
+    fireEvent.click(document.querySelector('.tie-row') as HTMLElement);
+    const tieSheet = document.querySelector('.sheet') as HTMLElement;
+    fireEvent.click(within(tieSheet).getByRole('button', { name: /Editar/i }));
+
+    const sheet = document.querySelector('.sheet') as HTMLElement;
+    const save = within(sheet).getByRole('button', { name: /Salvar placar/i }) as HTMLButtonElement;
+    const plus = within(sheet).getAllByLabelText(/Aumentar pontos/i);
+
+    fireEvent.click(plus[0]);
+    fireEvent.click(plus[0]);
+    fireEvent.click(plus[0]);
+    fireEvent.click(plus[1]);
+    expect(save.disabled).toBe(false);
+
+    fireEvent.click(plus[0]);
+    expect(save.disabled).toBe(true);
+    expect(within(sheet).getByText(/vencedor fecha com 3 partidas/i)).toBeTruthy();
   });
 
   it('gera a chave depois da fase de grupos', () => {

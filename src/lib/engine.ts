@@ -679,6 +679,7 @@ export const FORMAT_LABEL: Record<TournamentFormat, string> = {
 export const SPORT_LABEL: Record<Sport, string> = {
   fifa: 'FIFA',
   real: 'Vida real',
+  sinuca: 'Sinuca',
 };
 
 /* ------------------------------------------------------------------ */
