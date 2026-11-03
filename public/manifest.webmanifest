@@ -1,0 +1,29 @@
+{
+  "name": "Monta Copas — gerador de campeonatos",
+  "short_name": "Monta Copas",
+  "description": "Monte campeonatos de FIFA, sinuca e da vida real: pontos corridos, grupos e mata-mata com sorteio, placares e classificação automáticos.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait-primary",
+  "background_color": "#070a08",
+  "theme_color": "#070a08",
+  "lang": "pt-BR",
+  "dir": "ltr",
+  "categories": ["sports", "utilities", "entertainment"],
+  "icons": [
+    { "src": "./icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "./icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "./icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "./icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ],
+  "shortcuts": [
+    {
+      "name": "Novo campeonato",
+      "short_name": "Novo",
+      "url": "./#/novo",
+      "icons": [{ "src": "./icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}
